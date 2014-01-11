@@ -24,7 +24,9 @@ function testSpawn(spawn) {
   console.log('test pass');
 }
 
+var resolve = require.resolve;
 function getSpawn(require) {
+  require.resolve = resolve;
   var exports = {};
   var context = {
     module: exports,
@@ -36,18 +38,20 @@ function getSpawn(require) {
   vm.runInNewContext(spawnSource, context, spawnFile);
   return context.module.exports
 }
+
 console.log('# Test native operation');
 testSpawn(getSpawn(function (path) {
   if (path === 'child_process') {
-    require('ffi');
+    require('execSync');
     throw new Error('child_process shouldn\'t be needed when ffi is available');
   }
   return require(path);
 }));
+
 console.log('# Test fallback operation');
 testSpawn(getSpawn(function (path) {
-  if (path === 'ffi') {
-    throw new Error('ffi isn\'t always available');
+  if (path === 'execSync') {
+    throw new Error('execSync isn\'t always available');
   }
   return require(path);
 }));

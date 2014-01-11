@@ -6,11 +6,12 @@ var rimraf = require('rimraf').sync;
 // Try to load FFI which lets us synchronously invoke a command
 // Fallback to invoking the command using child_process and busy
 // waiting for an output file
+var nativeExec, cp;
 try {
-  var FFI = require('ffi');
-  var libc = new FFI.Library(null, {'system': ['int32', ['string']]});
+  require.resolve('execSync/build/Release/shell.node');
+  nativeExec = require('execSync').run;
 } catch (ex) {
-  var cp = require('child_process');
+  cp = require('child_process');
   console.warn('native module could not be found so busy waiting will be used for spawn-sync');
 }
 
@@ -29,23 +30,25 @@ rimraf(__dirname + '/temp');
 fs.mkdirSync(__dirname + '/temp');
 
 function invoke(cmd) {
-  if (FFI) {
+  if (nativeExec) {
     // I don't know why 256 is the magic number
-    return libc.system(cmd) / 256;
+    return nativeExec(cmd);
   } else {
     if (fs.existsSync(finished)) {
       fs.unlinkSync(finished);
     }
     cmd = cmd + '&& echo done! > ' + finished;
     cp.exec(cmd);
-    while (!fs.existsSync(finished)) {
-      // busy wait
-    }
-    fs.unlinkSync(finished);
-
-    // there is no way to extract the actual exit code so assume success
-    return 0;
   }
+  while (!fs.existsSync(finished)) {
+    // busy wait
+  }
+  try {
+    fs.unlinkSync(finished);
+  } catch (ex) { }
+
+  // there is no way to extract the actual exit code so assume success
+  return 0;
 }
 
 module.exports = spawn;

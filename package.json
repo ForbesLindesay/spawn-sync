@@ -1,14 +1,17 @@
 {
   "name": "spawn-sync",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "description": "Prollyfill for child_process.spawnSync",
   "keywords": [],
-  "dependencies": {},
-  "devDependencies": {
-    "mocha": "*"
+  "dependencies": {
+    "rimraf": "~2.2.5"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {
+    "execSync": "~1.0.0"
   },
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "node test/index.js"
   },
   "repository": {
     "type": "git",
