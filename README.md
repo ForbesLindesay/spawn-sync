@@ -25,7 +25,7 @@ var result = spawnSync('node',
 // Note, status code will always equal 0 if using busy waiting fallback
 if (result.statusCode !== 0) {
   process.stderr.write(result.stderr);
-  process.exit(result.statusCode);
+  process.exit(result.status);
 } else {
   process.stdout.write(result.stdout);
   process.stderr.write(result.stderr);

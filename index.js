@@ -66,7 +66,7 @@ function spawn(cmd, args, options) {
   }
   var exitCode = invoke(cmd);
   var res = {
-    exitCode: exitCode,
+    status: exitCode,
     stdout: fs.readFileSync(stdout),
     stderr: fs.readFileSync(stderr)
   };
