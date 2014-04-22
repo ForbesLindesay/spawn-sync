@@ -4,9 +4,9 @@ Prollyfill for child_process.spawnSync
 
 On platforms that support compiling native modules it uses the [execSync]() module to get true synchronous execution.  If native compilation is not supported it falls back to waiting for an output file to exist in a tight loop.  In this way it gains excellent cross platform support, but don't expect it to be efficient on all platforms.
 
-[![Build Status](https://travis-ci.org/ForbesLindesay/spawn-sync.png?branch=master)](https://travis-ci.org/ForbesLindesay/spawn-sync)
-[![Dependency Status](https://gemnasium.com/ForbesLindesay/spawn-sync.png)](https://gemnasium.com/ForbesLindesay/spawn-sync)
-[![NPM version](https://badge.fury.io/js/spawn-sync.png)](http://badge.fury.io/js/spawn-sync)
+[![Build Status](https://img.shields.io/travis/ForbesLindesay/spawn-sync/master.svg)](https://travis-ci.org/ForbesLindesay/spawn-sync)
+[![Dependency Status](https://img.shields.io/gemnasium/ForbesLindesay/spawn-sync.svg)](https://gemnasium.com/ForbesLindesay/spawn-sync)
+[![NPM version](https://img.shields.io/npm/v/spawn-sync.svg)](http://badge.fury.io/js/spawn-sync)
 
 ## Installation
 
