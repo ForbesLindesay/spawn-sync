@@ -40,14 +40,25 @@ function getSpawn(require) {
   return context.module.exports
 }
 
-console.log('# Test native operation');
-testSpawn(getSpawn(function (path) {
-  if (path === 'child_process') {
-    require('execSync');
-    throw new Error('child_process shouldn\'t be needed when ffi is available');
-  }
-  return require(path);
-}));
+var execSyncAvailable;
+try {
+  require('execSync');
+  execSyncAvailable = true;
+} catch (ex) {
+  execSyncAvailable = false;
+}
+if (execSyncAvailable) {
+  console.log('# Test native operation');
+  testSpawn(getSpawn(function (path) {
+    if (path === 'child_process') {
+      require('execSync');
+      throw new Error('child_process shouldn\'t be needed when ffi is available');
+    }
+    return require(path);
+  }));
+} else {
+  console.log('# SKIP Test native operation');
+}
 
 console.log('# Test fallback operation');
 testSpawn(getSpawn(function (path) {
