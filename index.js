@@ -3,6 +3,8 @@
 var path = require('path');
 var fs = require('fs');
 var rimraf = require('rimraf').sync;
+var util = require('util');
+var os = require('os');
 // Try to load FFI which lets us synchronously invoke a command
 // Fallback to invoking the command using child_process and busy
 // waiting for an output file
@@ -15,31 +17,20 @@ try {
   console.warn('native module could not be found so busy waiting will be used for spawn-sync');
 }
 
-// node.js script to read input into the command pipeline
-var read = path.normalize(__dirname + '/read.js');
-// location to store input for stdin
-var input = path.normalize(__dirname + '/temp/input');
-// locaiton to store output for stdout
-var stdout = path.normalize(__dirname + '/temp/stdout');
-// location to store output for stderr
-var stderr = path.normalize(__dirname + '/temp/stderr');
-// location to keep flag for busy waiting fallback
-var finished = path.normalize(__dirname + '/temp/finished');
-
-rimraf(__dirname + '/temp');
-fs.mkdirSync(__dirname + '/temp');
-
 function invoke(cmd) {
+  var logFileDir = path.normalize(path.join(os.tmpdir(), String(process.pid)));
+  // location to keep flag for busy waiting fallback
+  var finished = path.join(logFileDir, "finished");
   if (nativeExec) {
     // I don't know why 256 is the magic number
     return nativeExec(cmd);
-  } else {
-    if (fs.existsSync(finished)) {
-      fs.unlinkSync(finished);
-    }
-    cmd = cmd + '&& echo done! > ' + finished;
-    cp.exec(cmd);
   }
+
+  if (fs.existsSync(finished)) {
+    fs.unlinkSync(finished);
+  }
+  cmd = cmd + '&& echo done! > ' + finished;
+  cp.exec(cmd);
   while (!fs.existsSync(finished)) {
     // busy wait
   }
@@ -54,15 +45,30 @@ function invoke(cmd) {
 module.exports = spawn;
 function spawn(cmd, args, options) {
   options = options || {};
-  var stdout = path.normalize(__dirname + '/temp/stdout');
-  var stderr = path.normalize(__dirname + '/temp/stderr');
+  var logFileDir = path.normalize(path.join(os.tmpdir(), String(process.pid)));
+  rimraf(logFileDir);
+  fs.mkdirSync(logFileDir);
+  var stdout = path.join(logFileDir, "stdout");
+  var stderr = path.join(logFileDir, "stderr");
+  if (fs.existsSync(stdout)) {
+    fs.unlinkSync(stdout);
+  }
+  if (fs.existsSync(stderr)) {
+    fs.unlinkSync(stderr);
+  }
+
+  // node.js script to read input into the command pipeline
+  var read = path.normalize(__dirname + '/read.js');
+  // location to store input for stdin
+  var input = path.join(logFileDir, 'input');
+
   if (args && args.length) {
     cmd += ' ' + args.join(' ')
   }
   cmd = cmd + ' > ' + stdout + ' 2> ' + stderr;
   if (options.input) {
     fs.writeFileSync(input, options.input, {encoding: options.encoding});
-    cmd = 'node ' + read + ' | ' + cmd
+    cmd = util.format('node %s %s | %s', read, input, cmd);
   }
   var exitCode = invoke(cmd);
   var res = {
@@ -75,5 +81,6 @@ function spawn(cmd, args, options) {
   }
   fs.unlinkSync(stdout);
   fs.unlinkSync(stderr);
+  rimraf(logFileDir);
   return res;
 }
