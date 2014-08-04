@@ -33,7 +33,8 @@ function getSpawn(require) {
     exports: exports,
     require: require,
     __dirname: path.dirname(spawnFile),
-    console: console
+    console: console,
+    process: process
   };
   vm.runInNewContext(spawnSource, context, spawnFile);
   return context.module.exports
