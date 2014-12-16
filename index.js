@@ -22,26 +22,30 @@ function invoke(cmd) {
   var logFileDir = path.normalize(path.join(os.tmpdir(), String(process.pid)));
   // location to keep flag for busy waiting fallback
   var finished = path.join(logFileDir, "finished");
+  var code;
+
   if (nativeExec) {
-    // I don't know why 256 is the magic number
     return nativeExec(cmd);
   }
 
   if (fs.existsSync(finished)) {
     fs.unlinkSync(finished);
   }
-  cmd = cmd + '&& echo done! > ' + finished;
+  cmd = cmd + '; echo $? > ' + finished;
   cp.exec(cmd);
+
   while (!fs.existsSync(finished)) {
     // busy wait
   }
   try {
+    code = fs.readFileSync(finished);
     fs.unlinkSync(finished);
   } catch (ex) { }
 
-  // there is no way to extract the actual exit code so assume success
-  return 0;
+  //fallback to a 0 if the code is NaN or undefined
+  return parseInt(code, 10) || 0;
 }
+
 
 module.exports = spawn;
 function spawn(cmd, args, options) {
