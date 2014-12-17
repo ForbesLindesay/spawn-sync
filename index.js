@@ -43,7 +43,7 @@ function invoke(cmd) {
   }
   try {
     code = fs.readFileSync(finished);
-    fs.unlinkSync(finished);
+    fs.unlinkSync(finished, 'utf8').trim();
   } catch (ex) { }
 
   //fallback to a 0 if the code is NaN or undefined

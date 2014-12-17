@@ -21,6 +21,16 @@ function testSpawn(spawn) {
   assert(result.stderr.toString() === 'error log exists');
   assert(fs.readFileSync(__dirname + '/output.txt', 'utf8') === 'my-output');
   fs.unlinkSync(__dirname + '/output.txt');
+
+  var result = spawn("node", [__dirname + '/test-spawn-fail.js'], {input: 'my-output'});
+  assert(result.status === 13);
+  assert(Buffer.isBuffer(result.stdout));
+  assert(Buffer.isBuffer(result.stderr));
+  assert(result.stdout.toString() === 'output written');
+  assert(result.stderr.toString() === 'error log exists');
+  assert(fs.readFileSync(__dirname + '/output.txt', 'utf8') === 'my-output');
+  fs.unlinkSync(__dirname + '/output.txt');
+
   console.log('test pass');
 }
 
