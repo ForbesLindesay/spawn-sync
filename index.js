@@ -2,16 +2,18 @@
 
 var path = require('path');
 var fs = require('fs');
-var rimraf = require('rimraf').sync;
 var util = require('util');
 var os = require('os');
-// Try to load FFI which lets us synchronously invoke a command
+var rimraf = require('rimraf').sync;
+var hasNative = require('./lib/has-native.js');
+
+// Try to load execSync which lets us synchronously invoke a command
 // Fallback to invoking the command using child_process and busy
 // waiting for an output file
 var nativeExec, cp;
-try {
+if (hasNative) {
   nativeExec = require('execSync').run;
-} catch (ex) {
+} else {
   cp = require('child_process');
   console.warn('native module could not be found so busy waiting will be used for spawn-sync');
 }

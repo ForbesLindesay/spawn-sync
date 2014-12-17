@@ -40,16 +40,18 @@ function getSpawn(require) {
   return context.module.exports
 }
 
-var execSyncAvailable;
-try {
-  require('execSync');
-  execSyncAvailable = true;
-} catch (ex) {
-  execSyncAvailable = false;
+if (require('child_process').spawnSync) {
+  console.log('# Test built in node API');
+  testSpawn(require('child_process').spawnSync);
+} else {
+  console.log('# SKIP Test built in node API');
 }
+
+var execSyncAvailable = require('../lib/has-native.js');
 if (execSyncAvailable) {
   console.log('# Test native operation');
   testSpawn(getSpawn(function (path) {
+    if (path === './lib/has-native.js') return true;
     if (path === 'child_process') {
       throw new Error('child_process shouldn\'t be needed when execSync is available');
     }
@@ -61,8 +63,11 @@ if (execSyncAvailable) {
 
 console.log('# Test fallback operation');
 testSpawn(getSpawn(function (path) {
+  if (path === './lib/has-native.js') return false;
   if (path === 'execSync') {
     throw new Error('execSync isn\'t always available');
   }
   return require(path);
 }));
+
+console.log('All tests passed');
