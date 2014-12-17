@@ -10,11 +10,11 @@ var spawnSource = fs.readFileSync(spawnFile, 'utf8');
 
 function testSpawn(spawn) {
   var result = spawn("node", [__dirname + '/test-spawn.js'], {input: 'my-output'});
-  if (result.exitCode !== 0) {
+  if (result.status !== 0) {
     console.error(result.stderr.toString());
-    process.exit(result.exitCode);
+    throw new Error('expected status code to be 0');
   }
-  assert(result.exitCode === 0);
+  assert(result.status === 0);
   assert(Buffer.isBuffer(result.stdout));
   assert(Buffer.isBuffer(result.stderr));
   assert(result.stdout.toString() === 'output written');
@@ -33,7 +33,7 @@ function getSpawn(require) {
     exports: exports,
     require: require,
     __dirname: path.dirname(spawnFile),
-    console: {warn: function () {}},
+    console: console, //{warn: function () {}},
     process: process
   };
   vm.runInNewContext(spawnSource, context, spawnFile);
@@ -42,7 +42,6 @@ function getSpawn(require) {
 
 var execSyncAvailable;
 try {
-  require.resolve('execSync/build/Release/shell.node');
   require('execSync');
   execSyncAvailable = true;
 } catch (ex) {
@@ -52,8 +51,6 @@ if (execSyncAvailable) {
   console.log('# Test native operation');
   testSpawn(getSpawn(function (path) {
     if (path === 'child_process') {
-      require.resolve('execSync/build/Release/shell.node');
-      require('execSync');
       throw new Error('child_process shouldn\'t be needed when execSync is available');
     }
     return require(path);

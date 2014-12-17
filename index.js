@@ -10,7 +10,6 @@ var os = require('os');
 // waiting for an output file
 var nativeExec, cp;
 try {
-  require.resolve('execSync/build/Release/shell.node');
   nativeExec = require('execSync').run;
 } catch (ex) {
   cp = require('child_process');
@@ -85,7 +84,7 @@ function spawn(cmd, args, options) {
     rimraf(logFileDir);
   } catch (ex) {
     // don't fail completely if a file just seems to be locked
-    console.warn(ex.message || ex);
+    console.warn(ex.stack || ex.message || ex);
   }
   return res;
 }
