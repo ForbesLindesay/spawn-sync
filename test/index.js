@@ -10,11 +10,6 @@ var spawnSource = fs.readFileSync(spawnFile, 'utf8');
 
 function testSpawn(spawn) {
   var result = spawn("node", [__dirname + '/test-spawn.js'], {input: 'my-output'});
-  console.dir(result);
-  if (result.status !== 0) {
-    console.error(result.stderr.toString());
-    throw new Error('expected status code to be 0');
-  }
   assert(result.status === 0);
   assert(Buffer.isBuffer(result.stdout));
   assert(Buffer.isBuffer(result.stderr));
@@ -24,7 +19,6 @@ function testSpawn(spawn) {
   fs.unlinkSync(__dirname + '/output.txt');
 
   var result = spawn("node", [__dirname + '/test-spawn-fail.js'], {input: 'my-output'});
-  console.dir(result);
   assert(result.status === 13);
   assert(Buffer.isBuffer(result.stdout));
   assert(Buffer.isBuffer(result.stderr));
@@ -33,10 +27,12 @@ function testSpawn(spawn) {
   assert(fs.readFileSync(__dirname + '/output.txt', 'utf8') === 'my-output');
   fs.unlinkSync(__dirname + '/output.txt');
 
+  var start = Date.now();
   var result = spawn("node", [__dirname + '/test-spawn-timeout.js'], {timeout: 100});
   console.dir(result);
-  assert(result.signal === 'SIGTERM');
-
+  var end = Date.now();
+  assert((end - start) < 200);
+  
   console.log('test pass');
 }
 
