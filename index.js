@@ -31,7 +31,11 @@ function invoke(cmd) {
   if (fs.existsSync(finished)) {
     fs.unlinkSync(finished);
   }
-  cmd = cmd + '; echo $? > ' + finished;
+  if (process.platform === 'win32') {
+    cmd = cmd + '& echo %errorlevel% > ' + finished;
+  } else {
+    cmd = cmd + '; echo $? > ' + finished;
+  }
   cp.exec(cmd);
 
   while (!fs.existsSync(finished)) {
