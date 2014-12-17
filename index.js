@@ -47,6 +47,18 @@ function invoke(cmd) {
   return 0;
 }
 
+function rimrafWithRetry(filename) {
+  var removed = false, removeError, removeStart = Date.now();
+  while (!removed && (Date.now() - removeStart) < 200) {
+    try {
+      rimraf(filename);
+      removed = true;
+    } catch (ex) {
+      removeError = ex;
+    }
+  }
+  if (!removed) throw removeError;
+}
 
 module.exports = spawn;
 function spawn(cmd, commandArgs, options) {
@@ -54,7 +66,7 @@ function spawn(cmd, commandArgs, options) {
   for (var i = 0; i < arguments.length; i++) {
     args.push(arguments[i]);
   }
-  rimraf(logFileDir);
+  rimrafWithRetry(logFileDir);
   fs.mkdirSync(logFileDir);
 
   // node.js script to run the command
@@ -67,7 +79,7 @@ function spawn(cmd, commandArgs, options) {
   invoke('node "' + read + '" "' + logFileDir + '"');
   var res = JSON.parse(fs.readFileSync(output, 'utf8'));
   try {
-    rimraf(logFileDir);
+    rimrafWithRetry(logFileDir);
   } catch (ex) {
     // don't fail completely if a file just seems to be locked
     console.warn(ex.stack || ex.message || ex);
