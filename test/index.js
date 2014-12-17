@@ -10,10 +10,6 @@ var spawnSource = fs.readFileSync(spawnFile, 'utf8');
 
 function testSpawn(spawn) {
   var result = spawn("node", [__dirname + '/test-spawn.js'], {input: 'my-output'});
-  if (result.status !== 0) {
-    console.error(result.stderr.toString());
-    throw new Error('expected status code to be 0');
-  }
   assert(result.status === 0);
   assert(Buffer.isBuffer(result.stdout));
   assert(Buffer.isBuffer(result.stderr));
@@ -21,6 +17,25 @@ function testSpawn(spawn) {
   assert(result.stderr.toString() === 'error log exists');
   assert(fs.readFileSync(__dirname + '/output.txt', 'utf8') === 'my-output');
   fs.unlinkSync(__dirname + '/output.txt');
+
+  var result = spawn("node", [__dirname + '/test-spawn-fail.js'], {input: 'my-output'});
+  assert(result.status === 13);
+  assert(Buffer.isBuffer(result.stdout));
+  assert(Buffer.isBuffer(result.stderr));
+  assert(result.stdout.toString() === 'output written');
+  assert(result.stderr.toString() === 'error log exists');
+  assert(fs.readFileSync(__dirname + '/output.txt', 'utf8') === 'my-output');
+  fs.unlinkSync(__dirname + '/output.txt');
+
+  // This suprisingly fails for the official API
+  /*
+  var start = Date.now();
+  var result = spawn("node", [__dirname + '/test-spawn-timeout.js'], {timeout: 100});
+  console.dir(result);
+  var end = Date.now();
+  assert((end - start) < 200);
+  */
+
   console.log('test pass');
 }
 
@@ -52,6 +67,7 @@ if (execSyncAvailable) {
   console.log('# Test native operation');
   testSpawn(getSpawn(function (path) {
     if (path === './lib/has-native.js') return true;
+  if (path === './lib/json-buffer') return require('../lib/json-buffer');
     if (path === 'child_process') {
       throw new Error('child_process shouldn\'t be needed when execSync is available');
     }
@@ -64,6 +80,7 @@ if (execSyncAvailable) {
 console.log('# Test fallback operation');
 testSpawn(getSpawn(function (path) {
   if (path === './lib/has-native.js') return false;
+  if (path === './lib/json-buffer') return require('../lib/json-buffer');
   if (path === 'execSync') {
     throw new Error('execSync isn\'t always available');
   }
