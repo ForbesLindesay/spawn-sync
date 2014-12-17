@@ -10,11 +10,11 @@ var spawnSource = fs.readFileSync(spawnFile, 'utf8');
 
 function testSpawn(spawn) {
   var result = spawn("node", [__dirname + '/test-spawn.js'], {input: 'my-output'});
-  if (result.exitCode !== 0) {
+  if (result.status !== 0) {
     console.error(result.stderr.toString());
-    process.exit(result.exitCode);
+    throw new Error('expected status code to be 0');
   }
-  assert(result.exitCode === 0);
+  assert(result.status === 0);
   assert(Buffer.isBuffer(result.stdout));
   assert(Buffer.isBuffer(result.stderr));
   assert(result.stdout.toString() === 'output written');
@@ -33,26 +33,27 @@ function getSpawn(require) {
     exports: exports,
     require: require,
     __dirname: path.dirname(spawnFile),
-    console: console,
+    console: {warn: function () {}},
     process: process
   };
   vm.runInNewContext(spawnSource, context, spawnFile);
   return context.module.exports
 }
 
-var execSyncAvailable;
-try {
-  require('execSync');
-  execSyncAvailable = true;
-} catch (ex) {
-  execSyncAvailable = false;
+if (require('child_process').spawnSync) {
+  console.log('# Test built in node API');
+  testSpawn(require('child_process').spawnSync);
+} else {
+  console.log('# SKIP Test built in node API');
 }
+
+var execSyncAvailable = require('../lib/has-native.js');
 if (execSyncAvailable) {
   console.log('# Test native operation');
   testSpawn(getSpawn(function (path) {
+    if (path === './lib/has-native.js') return true;
     if (path === 'child_process') {
-      require('execSync');
-      throw new Error('child_process shouldn\'t be needed when ffi is available');
+      throw new Error('child_process shouldn\'t be needed when execSync is available');
     }
     return require(path);
   }));
@@ -62,8 +63,11 @@ if (execSyncAvailable) {
 
 console.log('# Test fallback operation');
 testSpawn(getSpawn(function (path) {
+  if (path === './lib/has-native.js') return false;
   if (path === 'execSync') {
     throw new Error('execSync isn\'t always available');
   }
   return require(path);
 }));
+
+console.log('All tests passed');

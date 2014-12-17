@@ -2,17 +2,18 @@
 
 var path = require('path');
 var fs = require('fs');
-var rimraf = require('rimraf').sync;
 var util = require('util');
 var os = require('os');
-// Try to load FFI which lets us synchronously invoke a command
+var rimraf = require('rimraf').sync;
+var hasNative = require('./lib/has-native.js');
+
+// Try to load execSync which lets us synchronously invoke a command
 // Fallback to invoking the command using child_process and busy
 // waiting for an output file
 var nativeExec, cp;
-try {
-  require.resolve('execSync/build/Release/shell.node');
+if (hasNative) {
   nativeExec = require('execSync').run;
-} catch (ex) {
+} else {
   cp = require('child_process');
   console.warn('native module could not be found so busy waiting will be used for spawn-sync');
 }
@@ -79,8 +80,13 @@ function spawn(cmd, args, options) {
   if (options.input) {
     fs.unlinkSync(input);
   }
-  fs.unlinkSync(stdout);
-  fs.unlinkSync(stderr);
-  rimraf(logFileDir);
+  try {
+    fs.unlinkSync(stdout);
+    fs.unlinkSync(stderr);
+    rimraf(logFileDir);
+  } catch (ex) {
+    // don't fail completely if a file just seems to be locked
+    console.warn(ex.stack || ex.message || ex);
+  }
   return res;
 }
