@@ -42,6 +42,7 @@ function getSpawn(require) {
 
 var execSyncAvailable;
 try {
+  require.resolve('execSync/build/Release/shell.node');
   require('execSync');
   execSyncAvailable = true;
 } catch (ex) {
@@ -51,8 +52,9 @@ if (execSyncAvailable) {
   console.log('# Test native operation');
   testSpawn(getSpawn(function (path) {
     if (path === 'child_process') {
+      require.resolve('execSync/build/Release/shell.node');
       require('execSync');
-      throw new Error('child_process shouldn\'t be needed when ffi is available');
+      throw new Error('child_process shouldn\'t be needed when execSync is available');
     }
     return require(path);
   }));
