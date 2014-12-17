@@ -79,8 +79,13 @@ function spawn(cmd, args, options) {
   if (options.input) {
     fs.unlinkSync(input);
   }
-  fs.unlinkSync(stdout);
-  fs.unlinkSync(stderr);
-  rimraf(logFileDir);
+  try {
+    fs.unlinkSync(stdout);
+    fs.unlinkSync(stderr);
+    rimraf(logFileDir);
+  } catch (ex) {
+    // don't fail completely if a file just seems to be locked
+    console.warn(ex.message || ex);
+  }
   return res;
 }
