@@ -39,52 +39,13 @@ function testSpawn(spawn) {
   console.log('test pass');
 }
 
-var resolve = require.resolve;
-function getSpawn(require) {
-  require.resolve = resolve;
-  var exports = {};
-  var context = {
-    module: exports,
-    exports: exports,
-    require: require,
-    __dirname: path.dirname(spawnFile),
-    console: {warn: function () {}},
-    process: process
-  };
-  vm.runInNewContext(spawnSource, context, spawnFile);
-  return context.module.exports
-}
-
 if (require('child_process').spawnSync) {
   console.log('# Test built in node API');
   testSpawn(require('child_process').spawnSync);
 } else {
   console.log('# SKIP Test built in node API');
 }
-
-var execSyncAvailable = require('../lib/has-native.js');
-if (execSyncAvailable) {
-  console.log('# Test native operation');
-  testSpawn(getSpawn(function (path) {
-    if (path === './lib/has-native.js') return true;
-  if (path === './lib/json-buffer') return require('../lib/json-buffer');
-    if (path === 'child_process') {
-      throw new Error('child_process shouldn\'t be needed when execSync is available');
-    }
-    return require(path);
-  }));
-} else {
-  console.log('# SKIP Test native operation');
-}
-
 console.log('# Test fallback operation');
-testSpawn(getSpawn(function (path) {
-  if (path === './lib/has-native.js') return false;
-  if (path === './lib/json-buffer') return require('../lib/json-buffer');
-  if (path === 'execSync') {
-    throw new Error('execSync isn\'t always available');
-  }
-  return require(path);
-}));
+testSpawn(require('../'));
 
 console.log('All tests passed');

@@ -4,31 +4,16 @@ var path = require('path');
 var fs = require('fs');
 var util = require('util');
 var os = require('os');
+var cp = require('child_process');
 var rimraf = require('rimraf').sync;
+var sleep = require('try-thread-sleep');
 var JSON = require('./lib/json-buffer');
-var hasNative = require('./lib/has-native.js');
-
-// Try to load execSync which lets us synchronously invoke a command
-// Fallback to invoking the command using child_process and busy
-// waiting for an output file
-var nativeExec, cp;
-if (hasNative) {
-  nativeExec = require('execSync').run;
-} else {
-  cp = require('child_process');
-  console.warn('native module could not be found so busy waiting will be used for spawn-sync');
-}
-
 
 var logFileDir = path.normalize(path.join(os.tmpdir(), String(process.pid) + '-spawn-sync'));
 
 function invoke(cmd) {
   // location to keep flag for busy waiting fallback
   var finished = path.join(logFileDir, "finished");
-
-  if (nativeExec) {
-    return nativeExec(cmd);
-  }
 
   if (fs.existsSync(finished)) {
     fs.unlinkSync(finished);
@@ -42,6 +27,7 @@ function invoke(cmd) {
 
   while (!fs.existsSync(finished)) {
     // busy wait
+    sleep(200);
   }
 
   return 0;
@@ -74,7 +60,7 @@ function spawn(cmd, commandArgs, options) {
   // location to store arguments
   var input = path.join(logFileDir, 'input.json');
   var output = path.join(logFileDir, 'output.json');
-  
+
   fs.writeFileSync(input, JSON.stringify(args));
   invoke('node "' + read + '" "' + logFileDir + '"');
   var res = JSON.parse(fs.readFileSync(output, 'utf8'));

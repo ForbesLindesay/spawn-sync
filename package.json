@@ -5,12 +5,10 @@
   "keywords": [],
   "dependencies": {
     "concat-stream": "^1.4.7",
-    "rimraf": "~2.2.5"
+    "rimraf": "~2.2.5",
+    "try-thread-sleep": "^1.0.0"
   },
   "devDependencies": {},
-  "optionalDependencies": {
-    "execSync": "~1.0.0"
-  },
   "scripts": {
     "test": "node test/index.js"
   },
