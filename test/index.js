@@ -5,9 +5,6 @@ var vm = require('vm');
 var fs = require('fs');
 var path = require('path');
 
-var spawnFile = require.resolve('../');
-var spawnSource = fs.readFileSync(spawnFile, 'utf8');
-
 function testSpawn(spawn) {
   var result = spawn("node", [__dirname + '/test-spawn.js'], {input: 'my-output'});
   assert(result.status === 0);
@@ -26,6 +23,14 @@ function testSpawn(spawn) {
   assert(result.stderr.toString() === 'error log exists');
   assert(fs.readFileSync(__dirname + '/output.txt', 'utf8') === 'my-output');
   fs.unlinkSync(__dirname + '/output.txt');
+
+
+  var result = spawn("node", [__dirname + '/test-empty.js'], {input: 'my-output'});
+  assert(result.status === 0);
+  assert(Buffer.isBuffer(result.stdout));
+  assert(Buffer.isBuffer(result.stderr));
+  assert(result.stdout.toString() === '');
+  assert(result.stderr.toString() === '');
 
   // This suprisingly fails for the official API
   /*
