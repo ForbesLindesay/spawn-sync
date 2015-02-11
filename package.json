@@ -3,14 +3,14 @@
   "version": "1.0.3",
   "description": "Prollyfill for child_process.spawnSync",
   "keywords": [],
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "concat-stream": "^1.4.7",
     "try-thread-sleep": "^1.0.0"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "node test/index.js",
-    "preinstall": "node preinstall"
+    "postinstall": "node postinstall"
   },
   "repository": {
     "type": "git",
