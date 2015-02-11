@@ -1,6 +1,6 @@
 {
   "name": "spawn-sync",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Prollyfill for child_process.spawnSync",
   "keywords": [],
   "dependencies": {},
@@ -10,7 +10,8 @@
   },
   "scripts": {
     "test": "node test/index.js",
-    "postinstall": "node postinstall"
+    "postinstall": "node postinstall",
+    "prepublish": "node postinstall"
   },
   "repository": {
     "type": "git",
