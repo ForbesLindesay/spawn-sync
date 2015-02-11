@@ -4,6 +4,7 @@ var assert = require('assert');
 var vm = require('vm');
 var fs = require('fs');
 var path = require('path');
+var sleep = require('try-thread-sleep');
 
 function testSpawn(spawn) {
   var result = spawn("node", [__dirname + '/test-spawn.js'], {input: 'my-output'});
@@ -44,6 +45,11 @@ function testSpawn(spawn) {
   console.log('test pass');
 }
 
+if (sleep.native) {
+  console.log('Using native thread-sleep');
+} else {
+  console.log('Using busy waiting');
+}
 if (require('child_process').spawnSync) {
   console.log('# Test built in node API');
   testSpawn(require('child_process').spawnSync);
@@ -51,6 +57,6 @@ if (require('child_process').spawnSync) {
   console.log('# SKIP Test built in node API');
 }
 console.log('# Test fallback operation');
-testSpawn(require('../'));
+testSpawn(require('../lib/spawn-sync'));
 
 console.log('All tests passed');
