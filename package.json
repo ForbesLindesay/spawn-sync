@@ -9,7 +9,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "node test/index.js"
+    "test": "node test/index.js",
+    "preinstall": "node preinstall"
   },
   "repository": {
     "type": "git",
