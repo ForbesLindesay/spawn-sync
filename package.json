@@ -4,7 +4,8 @@
   "description": "Prollyfill for child_process.spawnSync",
   "keywords": [],
   "dependencies": {
-    "concat-stream": "^1.4.7"
+    "concat-stream": "^1.4.7",
+    "os-shim": "^0.1.2"
   },
   "devDependencies": {
     "try-thread-sleep": "^1.0.0"
