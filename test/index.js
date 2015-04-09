@@ -16,6 +16,17 @@ function testSpawn(spawn) {
   assert(fs.readFileSync(__dirname + '/output.txt', 'utf8') === 'my-output');
   fs.unlinkSync(__dirname + '/output.txt');
 
+  var result = spawn("node", [__dirname + '/test-spawn.js'], {
+    input: 'my-output',
+    encoding: 'utf-8'
+  });
+  assert(result.status === 0);
+  assert(result.stdout === 'output written');
+  assert(result.stderr === 'error log exists');
+  assert.deepEqual(result.output, [null, 'output written', 'error log exists']);
+  assert(fs.readFileSync(__dirname + '/output.txt', 'utf8') === 'my-output');
+  fs.unlinkSync(__dirname + '/output.txt');
+
   var result = spawn("node", [__dirname + '/test-spawn-fail.js'], {input: 'my-output'});
   assert(result.status === 13);
   assert(Buffer.isBuffer(result.stdout));
@@ -24,7 +35,6 @@ function testSpawn(spawn) {
   assert(result.stderr.toString() === 'error log exists');
   assert(fs.readFileSync(__dirname + '/output.txt', 'utf8') === 'my-output');
   fs.unlinkSync(__dirname + '/output.txt');
-
 
   var result = spawn("node", [__dirname + '/test-empty.js'], {input: 'my-output'});
   assert(result.status === 0);
