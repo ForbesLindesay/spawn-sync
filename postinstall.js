@@ -5,10 +5,12 @@ var cp = require('child_process');
 var assert = require('assert');
 
 var partialDependencies = {
-  "concat-stream": "^1.4.7"
+  "concat-stream": "^1.4.7",
+  "os-shim": "^0.1.2"
 };
 var fullDependencies = {
   "concat-stream": "^1.4.7",
+  "os-shim": "^0.1.2",
   "try-thread-sleep": "^1.0.0"
 };
 
