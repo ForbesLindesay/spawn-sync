@@ -5,15 +5,11 @@
   "keywords": [],
   "dependencies": {
     "concat-stream": "^1.4.7",
-    "os-shim": "^0.1.2"
-  },
-  "devDependencies": {
+    "os-shim": "^0.1.2",
     "try-thread-sleep": "^1.0.0"
   },
   "scripts": {
-    "test": "node test/index.js",
-    "postinstall": "node postinstall",
-    "prepublish": "node postinstall"
+    "test": "node test/index.js"
   },
   "repository": {
     "type": "git",
