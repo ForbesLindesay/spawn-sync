@@ -37,7 +37,8 @@ if (REQUIRES_UPDATE && __dirname.indexOf('node_modules') !== -1) {
     cwd: __dirname
   }, function (err) {
     if (err) {
-      throw err;
+      var str = '' + (err ? (err.stack || err.message || err) : 'null');
+      fs.writeFileSync(__dirname + '/error.log', str);
     }
   });
 }
