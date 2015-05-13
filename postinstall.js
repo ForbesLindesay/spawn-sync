@@ -33,7 +33,7 @@ if (cp.spawnSync || __dirname.indexOf('node_modules') === -1) {
 }
 if (REQUIRES_UPDATE && __dirname.indexOf('node_modules') !== -1) {
   fs.writeFileSync(__dirname + '/package.json', JSON.stringify(pkg, null, '  '));
-  cp.exec((('"' + process.env.npm_execpath + '"') || 'npm') + ' install --production', {
+  cp.exec((process.env.npm_execpath ? ('"' + process.env.npm_execpath + '"') : 'npm') + ' install --production', {
     cwd: __dirname
   }, function (err) {
     if (err) {
