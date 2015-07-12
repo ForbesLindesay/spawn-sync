@@ -43,6 +43,25 @@ function testSpawn(spawn) {
   assert(result.stdout.toString() === '');
   assert(result.stderr.toString() === '');
 
+  var result = spawn("node", [__dirname + '/test-empty.js'], { stdio: ['pipe', 'ignore', 'pipe']});
+  assert(result.status === 0);
+  assert(Buffer.isBuffer(result.stderr));
+  assert(result.stdout == null);
+  assert(result.stderr.toString() === '');
+
+  var result = spawn("node", [__dirname + '/test-empty.js'], { stdio: ['pipe', 'pipe', 'ignore']});
+  assert(result.status === 0);
+  assert(Buffer.isBuffer(result.stdout));
+  assert(result.stdout.toString() === '');
+  assert(result.stderr == null);
+
+  var result = spawn("node", [__dirname + '/test-empty.js'], { stdio: ['ignore', 'pipe', 'pipe']});
+  assert(result.status === 0);
+  assert(Buffer.isBuffer(result.stdout));
+  assert(Buffer.isBuffer(result.stderr));
+  assert(result.stdout.toString() === '');
+  assert(result.stderr.toString() === '');
+
   // This suprisingly fails for the official API
   /*
   var start = Date.now();
