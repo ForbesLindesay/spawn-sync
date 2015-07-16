@@ -2,7 +2,7 @@
 
 Polyfill for `child_process.spawnSync`.
 
-On iojs and node >= 0.12 it will just export the built in `child_process.spawnSync`. On platforms that support compiling native modules it uses the [execSync](https://www.npmjs.org/package/execSync) module to get true synchronous execution.  If native compilation is not supported it falls back to waiting for an output file to exist in a tight loop.  In this way it gains excellent cross platform support, but don't expect it to be efficient on all platforms.
+On iojs and node >= 0.12 it will just export the built in `child_process.spawnSync`. On platforms that support compiling native modules it uses the [thread-sleep](https://github.com/ForbesLindesay/thread-sleep) module to wait for an output file to exist in a tight loop.  In this way it gains excellent cross platform support, but don't expect it to be efficient on all platforms.
 
 [![Linux & OSX Tests Status](https://img.shields.io/travis/ForbesLindesay/spawn-sync/master.svg?label=Linux%20%26%20OSX%20Tests)](https://travis-ci.org/ForbesLindesay/spawn-sync)
 [![Windows Tests Status](https://img.shields.io/appveyor/ci/ForbesLindesay/spawn-sync/master.svg?label=Windows%20Tests)](https://ci.appveyor.com/project/ForbesLindesay/spawn-sync)
@@ -13,6 +13,13 @@ On iojs and node >= 0.12 it will just export the built in `child_process.spawnSy
 
     npm install spawn-sync
 
+If this fails, you can try one of two things:
+
+1. You can install using `--unsafe-perm`, which will fix any permissions issues.
+
+    npm install --unsafe-perm spawn-sync
+
+2. You can upgrade to the latest version of node or iojs.  This will make native compilation unnecessary.
 
 ## Usage
 
