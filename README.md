@@ -30,7 +30,6 @@ var result = spawnSync('node',
                        ['filename.js'],
                        {input: 'write this to stdin'});
 
-// Note, status code will always equal 0 if using busy waiting fallback
 if (result.status !== 0) {
   process.stderr.write(result.stderr);
   process.exit(result.status);
