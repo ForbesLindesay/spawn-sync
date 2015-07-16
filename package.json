@@ -1,6 +1,6 @@
 {
   "name": "spawn-sync",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Prollyfill for child_process.spawnSync",
   "keywords": [],
   "dependencies": {
