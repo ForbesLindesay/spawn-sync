@@ -13,13 +13,21 @@ On iojs and node >= 0.12 it will just export the built in `child_process.spawnSy
 
     npm install spawn-sync
 
-If this fails, you can try one of two things:
+If this fails, you can try one of the following things:
 
 1. You can install using `--unsafe-perm`, which will fix any permissions issues.
 
     npm install --unsafe-perm spawn-sync
 
-2. You can upgrade to the latest version of node or iojs.  This will make native compilation unnecessary.
+2. You can install using `--ignore-scripts`, which will skip native compilation.  You'll get a warning if you try to require the module, but everything should still work.
+
+    npm install --ignore-scripts spawn-sync
+
+3. You can try [updating npm](https://docs.npmjs.com/getting-started/installing-node), since this seems to fail on some older versions of npm:
+
+    sudo npm install npm -g
+
+4. You can upgrade to the latest version of node or iojs.  This will make native compilation unnecessary.  You can then use `--ignore-scripts` without getting a warning if you still have trouble.
 
 ## Usage
 
