@@ -14,19 +14,21 @@ On iojs and node >= 0.12 it will just export the built in `child_process.spawnSy
 
 If this fails, you can try one of the following things:
 
-1. You can install using `--unsafe-perm`, which will fix any permissions issues.
+1. Some package managers made a stupid decision to rename the `node` executable to `nodejs` for their platform.  This breaks compatibility with lots of modules.  If you normally use `nodejs` instead of `node`, you should check out http://stackoverflow.com/questions/18130164/nodejs-vs-node-on-ubuntu-12-04 for possible fixes.
+
+2. You can install using `--unsafe-perm`, which will fix any permissions issues.
 
     npm install --unsafe-perm spawn-sync
 
-2. You can install using `--ignore-scripts`, which will skip native compilation.  You'll get a warning if you try to require the module, but everything should still work.
+3. You can install using `--ignore-scripts`, which will skip native compilation.  You'll get a warning if you try to require the module, but everything should still work.
 
     npm install --ignore-scripts spawn-sync
 
-3. You can try [updating npm](https://docs.npmjs.com/getting-started/installing-node), since this seems to fail on some older versions of npm:
+4. You can try [updating npm](https://docs.npmjs.com/getting-started/installing-node), since this seems to fail on some older versions of npm:
 
     sudo npm install npm -g
 
-4. You can upgrade to the latest version of node or iojs.  This will make native compilation unnecessary.  You can then use `--ignore-scripts` without getting a warning if you still have trouble.
+5. You can upgrade to the latest version of node or iojs.  This will make native compilation unnecessary.  You can then use `--ignore-scripts` without getting a warning if you still have trouble.
 
 ## Usage
 
