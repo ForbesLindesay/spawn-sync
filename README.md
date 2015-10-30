@@ -4,8 +4,7 @@ Polyfill for `child_process.spawnSync`.
 
 On iojs and node >= 0.12 it will just export the built in `child_process.spawnSync`. On platforms that support compiling native modules it uses the [thread-sleep](https://github.com/ForbesLindesay/thread-sleep) module to wait for an output file to exist in a tight loop.  In this way it gains excellent cross platform support, but don't expect it to be efficient on all platforms.
 
-[![Linux & OSX Tests Status](https://img.shields.io/travis/ForbesLindesay/spawn-sync/master.svg?label=Linux%20%26%20OSX%20Tests)](https://travis-ci.org/ForbesLindesay/spawn-sync)
-[![Windows Tests Status](https://img.shields.io/appveyor/ci/ForbesLindesay/spawn-sync/master.svg?label=Windows%20Tests)](https://ci.appveyor.com/project/ForbesLindesay/spawn-sync)
+[![Tests Status](https://img.shields.io/travis/ForbesLindesay/spawn-sync/master.svg)](https://travis-ci.org/ForbesLindesay/spawn-sync)
 [![Dependency Status](https://img.shields.io/gemnasium/ForbesLindesay/spawn-sync.svg)](https://gemnasium.com/ForbesLindesay/spawn-sync)
 [![NPM version](https://img.shields.io/npm/v/spawn-sync.svg)](http://badge.fury.io/js/spawn-sync)
 
