@@ -1,5 +1,7 @@
 # spawn-sync
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/ForbesLindesay/spawn-sync.svg)](https://greenkeeper.io/)
+
 Polyfill for `child_process.spawnSync`.
 
 On iojs and node >= 0.12 it will just export the built in `child_process.spawnSync`. On platforms that support compiling native modules it uses the [thread-sleep](https://github.com/ForbesLindesay/thread-sleep) module to wait for an output file to exist in a tight loop.  In this way it gains excellent cross platform support, but don't expect it to be efficient on all platforms.
