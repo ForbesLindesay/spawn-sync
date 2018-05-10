@@ -8,7 +8,7 @@
     "os-shim": "^0.1.2"
   },
   "devDependencies": {
-    "try-thread-sleep": "^1.0.0"
+    "try-thread-sleep": "^2.0.0"
   },
   "scripts": {
     "test": "node test/index.js",
